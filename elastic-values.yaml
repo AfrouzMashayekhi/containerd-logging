@@ -1,0 +1,40 @@
+---
+
+clusterName: "elastic"
+replicas: 1
+
+extraEnvs:
+  - name: ELASTIC_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: elastic-config-credentials
+        key: password
+  - name: ELASTIC_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: elastic-config-credentials
+        key: username
+
+# This is just a dummy file to make sure that
+# the keystore can be mounted at the same time
+# as a custom elasticsearch.yml
+esConfig:
+  elasticsearch.yml: |
+    xpack.security.enabled: false
+    path.data: /usr/share/elasticsearch/data
+
+
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "500Mi"
+  limits:
+    cpu: "700m"
+    memory: "3Gi"
+
+volumeClaimTemplate:
+  accessModes: [ "ReadWriteOnce" ]
+  resources:
+    requests:
+      storage: 10Gi

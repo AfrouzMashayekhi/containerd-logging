@@ -1,0 +1,42 @@
+apiVersion: v1
+data:
+  filebeat.yml: |-
+    filebeat.inputs:
+    - type: log
+      enabled: true
+      symlinks: true
+      exclude_files: ['filebeat.*',
+                      'logstash.*',
+                      'azure.*',
+                      'kube.*',
+                      'ignite.*',
+                      'influx.*',
+                      'prometheus.*',
+                      'rkubelog.*',
+                      'node-exporter.*']
+      paths:
+        - /var/log/containers/ing-nginx-*.log
+    processors:
+      - dissect:
+          tokenizer: "%{header} F %{parsed}"
+          field: "message"
+          target_prefix: ""
+          overwrite_keys: true
+      - drop_fields:
+          fields: ["message"]
+          ignore_missing: true
+      - rename:
+          fields:
+            - from: "parsed"
+              to: "message"
+          ignore_missing: true
+          fail_on_error: false   
+    output.logstash:
+      hosts: ["logstash:5100"]
+
+
+ 
+kind: ConfigMap
+metadata:
+  name: filebeat-configmap
+  namespace: logging
