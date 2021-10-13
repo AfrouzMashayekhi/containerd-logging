@@ -15,9 +15,13 @@ log-format-escape-json
 
 # Filbeat DaemonSet
 [Filebeat Daemonset ](./filebeat-src.yaml)
+
 [Configmap](./filebeat_configmap.yaml)
+
+Note: change ingress path in filebeat configmap based on your filename
 # Logstash
 [Logstash Deployment](./logstash.yaml)
+
 [configmap](./logstash-configmap.yaml)
 
 # Elastic 
@@ -29,3 +33,5 @@ helm install elastic -n logging -f elastic-values.yaml elastic/elasticsearch
 ```
  helm install kibana -n logging -f kibana-values.yaml elastic/kibana
 ```
+# Reference:
+https://github.com/miguelcallejasp/logging-filebeat-containerd
